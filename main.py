@@ -4,6 +4,8 @@ from psychopy import visual, core, event
 from numpy.random import random as npr
 import random as rd
 
+import sizeinfo
+
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
 
 windowBLACK = [-1, -1, -1]
@@ -13,7 +15,7 @@ CS = 'rgb'
 win = visual.Window([1024, 768], units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK,
                     colorSpace=CS, )
 
-X = 128  # width of gabor patch in pixels
+X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
 sf = .1  # cycles per pixel
 noiseTexture = npr([X, X]) * 2. - 1.  # a X-by-X array of random numbers in [-1,1]
 
