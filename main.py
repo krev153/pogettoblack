@@ -12,11 +12,11 @@ windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'
 
-win = visual.Window([1024, 768], units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK,
-                    colorSpace=CS, )
+win = visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK, colorSpace=CS)
+
 
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
-sf = .1  # cycles per pixel
+sf = .08  # cycles per pixel
 noiseTexture = npr([X, X]) * 2. - 1.  # a X-by-X array of random numbers in [-1,1]
 
 gabor_tex = (
@@ -26,7 +26,7 @@ gabor_tex = (
 
 size = 520
 sf = 15  # spatial frequency in cycles per pixel
-ori = 90  # orientation in degrees
+ori = 0  # orientation in degrees
 phase = 1
 contrast = 1.0
 mean = 0.37  # mean luminance
@@ -98,12 +98,14 @@ def draw_rg_grating(grating, red_gain=1.0, green_gain=1.0):
 draw = False
 sfuma = 1
 while not event.getKeys():
-    x_pos = rd.uniform(-400, 400)
-    y_pos = rd.uniform(-300, 300)
+    spawns = sizeinfo.spawnright()
+    x_pos = rd.uniform(spawns[0], spawns[1])
+    y_pos = rd.uniform(-spawns[2], spawns[2])
     draw = not draw
     # Set the position of the Gabor patch to the random coordinates
-    s.pos = [0, 0]
-    n.pos = [0, 0]
+    spawns = sizeinfo.spawnright()
+    s.pos = [x_pos, y_pos]
+    n.pos = [x_pos, y_pos]
     visibilita = 0
     for x in range(20):
         print(visibilita)

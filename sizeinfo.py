@@ -25,4 +25,30 @@ def sizegabor():
     valore = 2560/597*80
     print(valore)
     return valore
-sizegabor()
+
+
+
+def getwinpixel():
+    import ctypes
+    from screeninfo import get_monitors
+
+    user32 = ctypes.windll.user32
+    gdi32 = ctypes.windll.gdi32
+
+    width_px = user32.GetSystemMetrics(0)
+    height_px = user32.GetSystemMetrics(1)
+    winsize = [width_px, height_px] #larghezza altezza
+
+    return winsize
+
+def spawnright():
+    dimensionifinestra = getwinpixel()
+    dimensioigabor = sizegabor()
+
+    spawnorizsx = int(dimensioigabor/2)
+    spawnorizdx = int(dimensionifinestra[0]/2 - sizegabor()/2)
+
+    spawnver = int(dimensionifinestra[1]/2 - sizegabor()/2)
+
+    spawnpoint = [spawnorizsx,spawnorizdx,spawnver]
+    return spawnpoint
