@@ -8,6 +8,16 @@ import sizeinfo
 
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
 
+import ctypes
+
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2) # Set process DPI awareness to Per-Monitor DPI aware
+except:
+    pass
+
+ctypes.windll.user32.SetProcessDPIAware() # Set process DPI awareness to System DPI aware
+
+
 windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'

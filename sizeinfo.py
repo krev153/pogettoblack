@@ -16,15 +16,12 @@ def sizegabor():
 
     monitoruser = []
     for m in get_monitors():
-        print(str(m))
         m=str(m).split(',')
         monitoruser.append(m)
 
     pixeluser = monitoruser[0][2].replace("width=",'')
     sizeuser= monitoruser[0][4].replace("width_mm=",'')
-    print(pixeluser,sizeuser)
     valore = int(pixeluser)/int(width_mm)*80
-    print(valore)
     return valore
 
 
