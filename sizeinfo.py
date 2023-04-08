@@ -12,7 +12,7 @@ def sizegabor():
     height_mm = gdi32.GetDeviceCaps(hdc, 6)  # VERTSIZE
     gdi32.DeleteDC(hdc)
 
-    #print(f"Monitor size: {width_mm/10:.2f} cm x {height_mm/10:.2f} cm")
+    # print(f"Monitor size: {width_mm/10:.2f} cm x {height_mm/10:.2f} cm")
 
     monitoruser = []
     for m in get_monitors():

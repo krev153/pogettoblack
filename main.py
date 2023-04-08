@@ -11,19 +11,17 @@ import sizeinfo
 import ctypes
 
 try:
-    ctypes.windll.shcore.SetProcessDpiAwareness(2) # Set process DPI awareness to Per-Monitor DPI aware
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)  # Set process DPI awareness to Per-Monitor DPI aware
 except:
     pass
 
-ctypes.windll.user32.SetProcessDPIAware() # Set process DPI awareness to System DPI aware
-
+ctypes.windll.user32.SetProcessDPIAware()  # Set process DPI awareness to System DPI aware
 
 windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'
 
 win = visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK, colorSpace=CS)
-
 
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
 sf = .08  # cycles per pixel
@@ -105,31 +103,45 @@ def draw_rg_grating(grating, red_gain=1.0, green_gain=1.0):
     grating.opacity = start_opacity
 
 
-draw = False
+import chime
+
+coppia = True
 sfuma = 1
 while not event.getKeys():
 
-    #ottieni informazioni di spawn per quanto  riguarda il lato destro
+    # ottieni informazioni di spawn per quanto  riguarda il lato destro
     spawns = sizeinfo.spawnright()
     x_pos = rd.uniform(spawns[0], spawns[1])
     y_pos = rd.uniform(-spawns[2], spawns[2])
 
-    quadrante = sizeinfo.spawNumero(spawns[0],spawns[1],2,x_pos,y_pos)
-    print("quadrante, xpos, ypos", quadrante,x_pos,y_pos)
-
-    draw = not draw
+    quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos)
+    print("quadrante, xpos, ypos", quadrante, x_pos, y_pos)
+    if coppia:
+        draw = rd.randint(0, 1)
+    coppia = not coppia
     # Set the position of the Gabor patch to the random coordinates
     spawns = sizeinfo.spawnright()
     s.pos = [x_pos, y_pos]
     n.pos = [x_pos, y_pos]
     visibilita = 0
-    for x in range(20):
+    if draw == 0:
+        print("disegnio inizo")
+        # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+        draw+=1
+        chime.success()
+    else:
+        draw -= 1
+        print("suono" + str(draw))
+        chime.info()
+        # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+    for x in range(21):
         if (x > 10):
             visibilita = visibilita - 0.1
         else:
             visibilita = visibilita + 0.1
+        if draw == 1:
+            print("disegnio inizo parte"+str(x)+" "+str(visibilita))
 
-        if draw:
             draw_rg_grating(
                 grating=s,
                 red_gain=visibilita,
