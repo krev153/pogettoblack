@@ -108,9 +108,15 @@ def draw_rg_grating(grating, red_gain=1.0, green_gain=1.0):
 draw = False
 sfuma = 1
 while not event.getKeys():
+
+    #ottieni informazioni di spawn per quanto  riguarda il lato destro
     spawns = sizeinfo.spawnright()
     x_pos = rd.uniform(spawns[0], spawns[1])
     y_pos = rd.uniform(-spawns[2], spawns[2])
+
+    quadrante = sizeinfo.spawNumero(spawns[0],spawns[1],2,x_pos,y_pos)
+    print("quadrante, xpos, ypos", quadrante,x_pos,y_pos)
+
     draw = not draw
     # Set the position of the Gabor patch to the random coordinates
     spawns = sizeinfo.spawnright()
@@ -118,7 +124,6 @@ while not event.getKeys():
     n.pos = [x_pos, y_pos]
     visibilita = 0
     for x in range(20):
-        print(visibilita)
         if (x > 10):
             visibilita = visibilita - 0.1
         else:
@@ -136,7 +141,7 @@ while not event.getKeys():
                 green_gain=visibilita,
             )
         win.flip()
-        time.sleep(0.05)
+        core.wait(0.05)
     # if draw:
     #     draw_rg_grating(
     #         grating=s,

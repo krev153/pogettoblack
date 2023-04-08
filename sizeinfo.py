@@ -48,5 +48,35 @@ def spawnright():
 
     spawnver = int(dimensionifinestra[1]/2 - sizegabor()/2)
 
-    spawnpoint = [spawnorizsx,spawnorizdx,spawnver]
+    spawnpoint = [spawnorizsx,spawnorizdx,spawnver] #spawn nellà metà destra a [sx,dx,ver]
     return spawnpoint
+
+def DivisioneQuadrantiOriz(confine1, confine2 ,N): #date le coordinate e dati quante parti di schermo voglio nella metà verticale, restiuisce un vettore con le divisioni (Nx2 dove N = numero quadrati in orrizzontale)
+    larghezza = abs(confine1-confine2)
+    valorelat = int(larghezza / N)
+    if confine1 <= confine2:
+        min = confine1
+        max =  confine2
+    else:
+        min = confine2
+        max = confine1
+    quadrantilaterali = [min]
+    min = min + valorelat
+    while min < max-N:
+        quadrantilaterali.append(min)
+        min = min + valorelat
+    quadrantilaterali.append(max)
+
+    return quadrantilaterali
+
+def spawNumero(confine1, confine2 ,N, spawnOri, spawnVer): #confine 1, confine 2, quadranti che vuoi  in  una metà verticale, coordinata ori, coordinata verticale
+    vettorediquadranti = DivisioneQuadrantiOriz(confine1, confine2 ,N)
+    conta = 1
+    for x in vettorediquadranti:
+        if spawnOri >= x and spawnOri < vettorediquadranti[conta]:
+            quadrante = conta
+            break
+        conta=conta+1
+    if spawnVer < 0:
+        quadrante = conta+N
+    return quadrante
