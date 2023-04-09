@@ -1,11 +1,7 @@
-import time
-
-from psychopy import visual, core, event
+from psychopy import visual
 from numpy.random import random as npr
 import random as rd
-
-import sys
-
+import raccoltaDati
 import sizeinfo
 
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
@@ -23,9 +19,9 @@ windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'
 
-win = visual.Window(fullscr=False, size=[1600, 1600], units='pix', monitor='testMonitor', blendMode='avg',
+win = visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg',
                     color=windowBLACK, colorSpace=CS)
-print(sys.argv[1:])
+
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
 sf = .08  # cycles per pixel
 noiseTexture = npr([X, X]) * 2. - 1.  # a X-by-X array of random numbers in [-1,1]
@@ -113,9 +109,17 @@ sfuma = 1
 text = visual.TextStim(win=win, text='Preme un tasto per iniziare', height=30)
 text.draw()
 win.flip()
+
+#lettura di quanti cicli
+with open('values.txt', 'r') as f:
+    lines = f.readlines()
+cicli = int(lines[1].split(':')[-1].strip())
+#lettura del dizionario
+dizionario = raccoltaDati.creazioneDizionario(2)
+
 while event.waitKeys():
     # while app is open
-    for x in range(10):
+    for x in range(cicli):
         primo = 0
         for y in range(2):
             # ottieni informazioni di spawn per quanto  riguarda il lato destro
@@ -124,7 +128,7 @@ while event.waitKeys():
             y_pos = rd.uniform(-spawns[2], spawns[2])
 
             quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos)
-            print("quadrante, xpos, ypos", quadrante, x_pos, y_pos)
+            #"quadrante, xpos, ypos", quadrante, x_pos, y_pos)
             if y == 0:
                 draw = rd.randint(0, 1)
                 primo = draw
@@ -134,12 +138,10 @@ while event.waitKeys():
             n.pos = [x_pos, y_pos]
             visibilita = 0
             if draw == 0:
-                print("disegnio inizo")
                 draw += 1
                 chime.success()
             else:
                 draw -= 1
-                # print("suono" + str(draw))
                 chime.info()
             for x in range(22):
                 if (x > 10):
@@ -147,7 +149,6 @@ while event.waitKeys():
                 else:
                     visibilita = visibilita + 0.1
                 if draw == 1:
-                    # print("disegnio inizo parte" + str(x) + " " + str(visibilita))
                     draw_rg_grating(
                         grating=s,
                         red_gain=visibilita,
@@ -171,23 +172,27 @@ while event.waitKeys():
             keys = event.getKeys(['right', 'left', 'down'])
             if 'right' in keys:
                 l = False
-                print("dad")
                 if (primo == 0):
-                    print("errato")
+                    #("errato")
+                    dizionario['Q' + str(quadrante)]["Sbagliati"] = dizionario['Q' + str(quadrante)]["Sbagliati"]  +1
                 else:
-                    print("correto")
+                    #("correto")
+                    dizionario['Q' + str(quadrante)]["Giusti"] = dizionario['Q' + str(quadrante)]["Giusti"]  +1
 
             if 'left' in keys:
                 l = False
                 if (primo == 0):
-                    print("correto")
+                    dizionario['Q' + str(quadrante)]["Giusti"] = dizionario['Q'+ str(quadrante)]["Giusti"]  +1
+                    #("correto")
                 else:
-                    print("errato")
-                print("sin")
+                    #("errato")
+                    dizionario['Q' + str(quadrante)]["Sbagliati"] = dizionario['Q' + str(quadrante)]["Sbagliati"]  +1
+
 
             if 'down' in keys:
                 l = False
-                print("gi")
+                dizionario['Q' + str(quadrante)]["Non visti"] = dizionario['Q' + str(quadrante)]["Non visti"]  +1
+                #print("non visto")
             # if draw:
             #     draw_rg_grating(
             #         grating=s,
@@ -203,7 +208,8 @@ while event.waitKeys():
             # n.draw()  # draw noise in the background
             # s.draw()  # draw gabor on top of noise
             event.clearEvents('mouse')  # for pygame only
-
+    break
+raccoltaDati.datiGabor(2,dizionario)
 win.close()
 core.quit()
 
