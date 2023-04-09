@@ -4,7 +4,7 @@ from psychopy import visual, core, event
 from numpy.random import random as npr
 import random as rd
 
-import sizeinfo
+import sizeinfo, raccoltaDati
 
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
 
@@ -107,14 +107,18 @@ import chime
 
 coppia = True
 sfuma = 1
-while not event.getKeys():
 
+
+dizionario = raccoltaDati.creazioneDizionario(2)
+
+
+while not event.getKeys():
     # ottieni informazioni di spawn per quanto  riguarda il lato destro
     spawns = sizeinfo.spawnright()
     x_pos = rd.uniform(spawns[0], spawns[1])
     y_pos = rd.uniform(-spawns[2], spawns[2])
 
-    quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos)
+    quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos) #il 3 parametro è N
     print("quadrante, xpos, ypos", quadrante, x_pos, y_pos)
     if coppia:
         draw = rd.randint(0, 1)
