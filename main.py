@@ -4,7 +4,7 @@ from psychopy import visual, core, event
 from numpy.random import random as npr
 import random as rd
 
-import sizeinfo, raccoltaDati
+import sizeinfo
 
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
 
@@ -21,7 +21,7 @@ windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'
 
-win = visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK, colorSpace=CS)
+win = visual.Window(fullscr=False,size=[1600,1600], units='pix', monitor='testMonitor', blendMode='avg', color=windowBLACK, colorSpace=CS)
 
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
 sf = .08  # cycles per pixel
@@ -107,72 +107,72 @@ import chime
 
 coppia = True
 sfuma = 1
+text = visual.TextStim(win=win, text='Premere il tasto X se ha visto lo stimolo assieme al primo segnale audio, prema invece Y se lo stimolo è stato visto durante il secondo segnale audio, prema invece Z se non ha visto nessuno stimolo',height=30)
+text.draw()
+win.flip()
+while event.waitKeys():
+    while not event.getKeys():
+        # ottieni informazioni di spawn per quanto  riguarda il lato destro
+        spawns = sizeinfo.spawnright()
+        x_pos = rd.uniform(spawns[0], spawns[1])
+        y_pos = rd.uniform(-spawns[2], spawns[2])
 
-
-dizionario = raccoltaDati.creazioneDizionario(2)
-
-
-while not event.getKeys():
-    # ottieni informazioni di spawn per quanto  riguarda il lato destro
-    spawns = sizeinfo.spawnright()
-    x_pos = rd.uniform(spawns[0], spawns[1])
-    y_pos = rd.uniform(-spawns[2], spawns[2])
-
-    quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos) #il 3 parametro è N
-    print("quadrante, xpos, ypos", quadrante, x_pos, y_pos)
-    if coppia:
-        draw = rd.randint(0, 1)
-    coppia = not coppia
-    # Set the position of the Gabor patch to the random coordinates
-    spawns = sizeinfo.spawnright()
-    s.pos = [x_pos, y_pos]
-    n.pos = [x_pos, y_pos]
-    visibilita = 0
-    if draw == 0:
-        print("disegnio inizo")
-        # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
-        draw+=1
-        chime.success()
-    else:
-        draw -= 1
-        print("suono" + str(draw))
-        chime.info()
-        # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
-    for x in range(21):
-        if (x > 10):
-            visibilita = visibilita - 0.1
+        quadrante = sizeinfo.spawNumero(spawns[0], spawns[1], 2, x_pos, y_pos)
+        print("quadrante, xpos, ypos", quadrante, x_pos, y_pos)
+        if coppia:
+            draw = rd.randint(0, 1)
+        coppia = not coppia
+        # Set the position of the Gabor patch to the random coordinates
+        spawns = sizeinfo.spawnright()
+        s.pos = [x_pos, y_pos]
+        n.pos = [x_pos, y_pos]
+        visibilita = 0
+        if draw == 0:
+            print("disegnio inizo")
+            # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+            draw += 1
+            chime.success()
         else:
-            visibilita = visibilita + 0.1
-        if draw == 1:
-            print("disegnio inizo parte"+str(x)+" "+str(visibilita))
+            draw -= 1
+            print("suono" + str(draw))
+            chime.info()
+            # winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
+        for x in range(21):
+            if (x > 10):
+                visibilita = visibilita - 0.1
+            else:
+                visibilita = visibilita + 0.1
+            if draw == 1:
+                print("disegnio inizo parte" + str(x) + " " + str(visibilita))
 
-            draw_rg_grating(
-                grating=s,
-                red_gain=visibilita,
-                green_gain=visibilita,
-            )
-            draw_rg_grating(
-                grating=n,
-                red_gain=visibilita,
-                green_gain=visibilita,
-            )
-        win.flip()
-        core.wait(0.05)
-    # if draw:
-    #     draw_rg_grating(
-    #         grating=s,
-    #         red_gain=1,
-    #         green_gain=1,
-    #     )
-    #     draw_rg_grating(
-    #         grating=n,
-    #         red_gain=1,
-    #         green_gain=1,
-    #     )
-    # time.sleep(1)
-    # n.draw()  # draw noise in the background
-    # s.draw()  # draw gabor on top of noise
-    event.clearEvents('mouse')  # for pygame only
+                draw_rg_grating(
+                    grating=s,
+                    red_gain=visibilita,
+                    green_gain=visibilita,
+                )
+                draw_rg_grating(
+                    grating=n,
+                    red_gain=visibilita,
+                    green_gain=visibilita,
+                )
+            win.flip()
+            core.wait(0.05)
+        # if draw:
+        #     draw_rg_grating(
+        #         grating=s,
+        #         red_gain=1,
+        #         green_gain=1,
+        #     )
+        #     draw_rg_grating(
+        #         grating=n,
+        #         red_gain=1,
+        #         green_gain=1,
+        #     )
+        # time.sleep(1)
+        # n.draw()  # draw noise in the background
+        # s.draw()  # draw gabor on top of noise
+        event.clearEvents('mouse')  # for pygame only
+
 
 win.close()
 core.quit()
