@@ -1,11 +1,40 @@
 from psychopy import visual
+import psychopy
 from numpy.random import random as npr
 import random as rd
+import psychopy.visual.backends.pygletbackend
+from psychopy.hardware import crs
+
+import pyglet
+import pygame
+
+print(pygame)
+
+# import required module
+from playsound import playsound
+
+# for playing note.wav file
+
+import pygame
+
+pygame.mixer.init()  # Inizializza il mixer audio
+
+suono = pygame.mixer.Sound('audio1.wav')  # Crea oggetto suono con il file WAV
+suono.set_volume(0.5)
+
+# Puoi riprodurre il suono ogni volta che ne hai bisogno
+
+import threading
+def alert():
+    # threading.Thread(target=playsound, args=('audio1.wav',), daemon=True).start()
+    suono.play()
+
+
 import raccoltaDati
 import sizeinfo
-
+psychopy.useVersion('2023.1.0')
 # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
-
+print(crs)
 import ctypes
 
 try:
@@ -19,7 +48,7 @@ windowBLACK = [-1, -1, -1]
 WHITE = [1, 1, 1]
 CS = 'rgb'
 
-win = visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg',
+win = psychopy.visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg',
                     color=windowBLACK, colorSpace=CS)
 
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
@@ -60,8 +89,7 @@ n = visual.GratingStim(
     colorSpace=CS,
 
 )
-import psychopy.visual
-import psychopy.event
+
 from psychopy import visual, core, event
 import pyglet.gl
 
@@ -116,10 +144,10 @@ with open('values.txt', 'r') as f:
 cicli = int(lines[1].split(':')[-1].strip())
 #lettura del dizionario
 dizionario = raccoltaDati.creazioneDizionario(2)
-
+t=True
 while event.waitKeys():
     # while app is open
-    for x in range(cicli):
+    for z in range(cicli):
         primo = 0
         for y in range(2):
             # ottieni informazioni di spawn per quanto  riguarda il lato destro
@@ -138,11 +166,11 @@ while event.waitKeys():
             n.pos = [x_pos, y_pos]
             visibilita = 0
             if draw == 0:
+                alert()
                 draw += 1
-                chime.success()
             else:
+                alert()
                 draw -= 1
-                chime.info()
             for x in range(22):
                 if (x > 10):
                     visibilita = visibilita - 0.1
@@ -162,14 +190,17 @@ while event.waitKeys():
                 win.flip()
                 core.wait(0.05)
         l = True
+        event.clearEvents()
         while l:
             text = visual.TextStim(win=win,
-                                   text='Premere il tasto X se ha visto lo stimolo assieme al primo segnale audio, prema invece Y '
-                                        'se lo stimolo è stato visto durante il secondo segnale audio, prema invece Z se '
-                                        'non ha visto nessuno stimolo', height=30)
+                                       text='Premere il tasto "freccia sinistra \u2190" se lo stimolo è stato visto assieme al primo segnale audio\n\n '
+                                            'premere il tasto "freccia destra \u2192" se lo stimolo è stato visto assieme al secondo segnale audio\n\n'
+                                            'se lo stimolo NON è stato visto premere invece "freccia in basso \u2193"\n\n'
+                                            'premere "ESC" per fermare la sessione',
+                                       height=30)
             text.draw()
             win.flip()
-            keys = event.getKeys(['right', 'left', 'down'])
+            keys = event.getKeys(['right', 'left', 'down', 'escape'])
             if 'right' in keys:
                 l = False
                 if (primo == 0):
@@ -192,6 +223,13 @@ while event.waitKeys():
             if 'down' in keys:
                 l = False
                 dizionario['Q' + str(quadrante)]["Non visti"] = dizionario['Q' + str(quadrante)]["Non visti"]  +1
+
+            if 'escape' in keys:
+                l = False
+                t=False
+                win.close()
+                core.quit()
+
                 #print("non visto")
             # if draw:
             #     draw_rg_grating(
@@ -208,10 +246,23 @@ while event.waitKeys():
             # n.draw()  # draw noise in the background
             # s.draw()  # draw gabor on top of noise
             event.clearEvents('mouse')  # for pygame only
+    while t:
+        keys = event.getKeys(['right', 'left', 'down', 'escape'])
+        text = visual.TextStim(win=win,
+                               text="La sessione è conclusa,  premere ESC per chiudere applicativo",
+                               height=30)
+        text.draw()
+        win.flip()
+        if 'escape' in keys:
+            t = False
+            win.close()
+            core.quit()
     break
+
+
+
 raccoltaDati.datiGabor(2,dizionario)
-win.close()
-core.quit()
+
 
 from numpy.random import random as npr
 
