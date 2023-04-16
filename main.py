@@ -8,17 +8,16 @@ from psychopy.hardware import crs
 import pyglet
 import pygame
 
-print(pygame)
+import pygetwindow as gw
 
 # import required module
 from playsound import playsound
 
 # for playing note.wav file
 
-import pygame
 
-pygame.mixer.init()  # Inizializza il mixer audio
-
+pygame.mixer.pre_init(44100, -16, 2, 64)
+pygame.mixer.init()
 suono = pygame.mixer.Sound('audio1.wav')  # Crea oggetto suono con il file WAV
 suono.set_volume(0.5)
 
@@ -50,7 +49,7 @@ CS = 'rgb'
 
 win = psychopy.visual.Window(fullscr=True, units='pix', monitor='testMonitor', blendMode='avg',
                     color=windowBLACK, colorSpace=CS)
-
+win.nextEditable()
 X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
 sf = .08  # cycles per pixel
 noiseTexture = npr([X, X]) * 2. - 1.  # a X-by-X array of random numbers in [-1,1]
@@ -145,6 +144,11 @@ cicli = int(lines[1].split(':')[-1].strip())
 #lettura del dizionario
 dizionario = raccoltaDati.creazioneDizionario(2)
 t=True
+
+psychopy_win = gw.getWindowsWithTitle('PsychoPy')[0]
+if psychopy_win is not None:
+    psychopy_win.activate()
+
 while event.waitKeys():
     # while app is open
     for z in range(cicli):
@@ -227,6 +231,10 @@ while event.waitKeys():
             if 'escape' in keys:
                 l = False
                 t=False
+                try:
+                    raccoltaDati.datiGabor(2, dizionario)
+                except:
+                    print("")
                 win.close()
                 core.quit()
 
@@ -254,6 +262,12 @@ while event.waitKeys():
         text.draw()
         win.flip()
         if 'escape' in keys:
+            print(dizionario)
+            try:
+                raccoltaDati.datiGabor(2, dizionario)
+            except:
+                print("")
+
             t = False
             win.close()
             core.quit()
@@ -261,7 +275,6 @@ while event.waitKeys():
 
 
 
-raccoltaDati.datiGabor(2,dizionario)
 
 
 from numpy.random import random as npr
