@@ -6,6 +6,7 @@ from psychopy.hardware import crs
 
 import pyglet
 import pygame
+
 import pygetwindow as gw
 
 # import required module
@@ -325,5 +326,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-
+    try:
+        main()
+    except:
+        print("error")
