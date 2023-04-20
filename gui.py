@@ -43,7 +43,7 @@ def read_values():
 
         window.destroy()
 
-button = tk.Button(window, text="Read Values", command=read_values)
+button = tk.Button(window, text="Salva i dati", command=read_values)
 button.pack()
 
 # Run the tkinter mainloop
