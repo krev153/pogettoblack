@@ -32,11 +32,10 @@ def datiGabor(N, dizionario):
         sh1[casella].value = 'Quadrante N ' + str((i+1))
     sh1['B1'].value = "Giusti"
     sh1['C1'].value = "Sbagliati"
-    sh1['D1'].value = "Non visti"
     for i in range(N*2):
         sh1['B'+ str(i+2)].value = dizionario['Q'+str(i+1)]['Giusti']
         sh1['C' + str(i + 2)].value = dizionario['Q' + str(i + 1)]['Sbagliati']
-        sh1['D' + str(i + 2)].value = dizionario['Q' + str(i + 1)]['Non visti']
+
     try:
         sh1.column_dimensions['A'].auto_size = True
         sh1.column_dimensions['A'].width += 1

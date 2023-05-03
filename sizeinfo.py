@@ -39,8 +39,8 @@ def getwinpixel():
 
     return winsize
 
-def spawnright():
-    dimensionifinestra = getwinpixel()
+def spawnright(N):  # ricordati la coordinate 0,0  è al centro dello schermo ma sul bordo sinistro,  mentre le dimensioni dello schermo  sono con la coordinata bassa sx
+   ''' dimensionifinestra = getwinpixel()
     dimensioigabor = sizegabor()
 
     spawnorizsx = int(dimensioigabor/2)
@@ -48,8 +48,38 @@ def spawnright():
 
     spawnver = int(dimensionifinestra[1]/2 - sizegabor()/2)
 
-    spawnpoint = [spawnorizsx,spawnorizdx,spawnver] #spawn nellà metà destra a [sx,dx,ver]
-    return spawnpoint
+    spawnpoint = [spawnorizsx,spawnorizdx,spawnver] #spawn nellà metà destra a [sx,dx,ver]'''
+   dimensionifinestra = getwinpixel()
+   larghezza=dimensionifinestra[0]
+   spawnsUp = []
+   temporale = int((((larghezza*0.75)*(1/N)))) #la distanza tra  ogni   bordo e  il centro  del quadrante
+   latoSX = int(0.25 * larghezza) + int(temporale/2)
+   for i in range(N):
+       spawnsUp.append([latoSX,0])
+       latoSX = latoSX + temporale
+   spawnsUp.append(int(dimensionifinestra[1]/4))
+   spawnsDown = spawnsUp.copy()
+   spawnsDown[-1] = -spawnsDown[-1]
+   #print("Upp",spawnsUp)
+   #print("down",spawnsDown)
+   return spawnsUp, spawnsDown, int(0.25 * larghezza), dimensionifinestra[1], temporale
+spawnright(2)
+
+def spawnleft(N):
+    dimensionifinestra = getwinpixel()
+    larghezza = dimensionifinestra[0]
+    spawnsUp = []
+    temporale = int((((larghezza * 0.75) * (1 / N))))  # la distanza tra  ogni   bordo e  il centro  del quadrante
+    latoSX = int(temporale / 2)
+    for i in range(N):
+        spawnsUp.append([latoSX, 0])
+        latoSX = latoSX + temporale
+    spawnsUp.append(int(dimensionifinestra[1] / 4))
+    spawnsDown = spawnsUp.copy()
+    spawnsDown[-1] = -spawnsDown[-1]
+    print("Up",spawnsUp)
+    print("down",spawnsDown)
+    return spawnsUp, spawnsDown, int(0.75 * larghezza), dimensionifinestra[1], temporale
 
 def DivisioneQuadrantiOriz(confine1, confine2 ,N): #date le coordinate e dati quante parti di schermo voglio nella metà verticale, restiuisce un vettore con le divisioni (Nx2 dove N = numero quadrati in orrizzontale)
     larghezza = abs(confine1-confine2)
@@ -80,3 +110,9 @@ def spawNumero(confine1, confine2 ,N, spawnOri, spawnVer): #confine 1, confine 2
     if spawnVer < 0:
         quadrante = conta+N
     return quadrante
+
+def quadrante(upordown,posizione,N):
+    if upordown == 0:
+        return posizione+1
+    else:
+        return posizione+1+N
