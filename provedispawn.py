@@ -1,6 +1,15 @@
 import sizeinfo
 import pygame
-N=4
+
+
+with open("values.txt", "r") as file:
+    lines = file.readlines()
+    N = int(lines[3].strip().split(":")[1].strip())
+
+
+
+
+
 # inizializza pygame
 pygame.init()
 
@@ -51,4 +60,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                quit()
+
 

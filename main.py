@@ -119,10 +119,13 @@ def draw_ybrown_grating(grating, contrast=0.2):
 
 from random import randint
 def main():
-    veroSeDestra = True
-    N=2
-    from psychopy import visual
     import raccoltaDati
+    veroSeDestra = False
+    N = int(raccoltaDati.valori()[3])
+    direzione = raccoltaDati.valori()[2]
+    if direzione == 'right':
+        veroSeDestra = True
+    from psychopy import visual
     import sizeinfo
     #psychopy.useVersion('2023.1.0')
     # https://discourse.psychopy.org/t/how-to-control-signal-to-noise-contrast-ratio-for-a-gabor-noise-patch/6900
@@ -144,7 +147,7 @@ def main():
                                  color=windowBLACK, colorSpace=CS)
     win.nextEditable()
     X = int(sizeinfo.sizegabor())  # width of gabor patch in pixels
-    sf = .08  # cycles per pixel
+    sf = .04  # cycles per pixel
     noiseTexture = npr([X, X]) * 2. - 1.  # a X-by-X array of random numbers in [-1,1]
 
     gabor_tex = (
@@ -189,62 +192,78 @@ def main():
 
     coppia = True
     sfuma = 1
-    text = visual.TextStim(win=win, text='Preme un tasto per iniziare', height=30)
+    text = visual.TextStim(win=win, text='Premere il tasto "freccia sinistra \u2190" se lo stimolo è stato visto assieme al primo segnale audio\n\n '
+                                         'premere il tasto "freccia destra \u2192" se lo stimolo è stato visto assieme al secondo segnale audio\n\n'
+                                         'se lo stimolo NON è stato visto premere invece "freccia in basso \u2193"\n\n'
+                                         'premere "P" per mettere in pausa\n\n'
+                                         'Preme un tasto per iniziare', height=30)
     text.draw()
     win.flip()
 
     # lettura di quanti cicli
     with open('values.txt', 'r') as f:
         lines = f.readlines()
-    cicli = int(lines[1].split(':')[-1].strip())
+    cicli = int(raccoltaDati.valori()[1])
     # lettura del dizionario
     dizionario = raccoltaDati.creazioneDizionario(N)
     t = True
 
     if veroSeDestra: # indovina indovinello qua ci arriva se è destra
-        placeholder = sizeinfo.spawnright(N)
+        spawnUp = sizeinfo.spawnright(N)[0]
+        spawnDown = sizeinfo.spawnright(N)[1]
+        puntoFisso = [(int(sizeinfo.spawnright(N)[2]-sizeinfo.getwinpixel()[0] / 2)),0]
     else:
-        placeholder = sizeinfo.spawnleft(N)
-    spawnUp = placeholder[0]
-    spawnDown = placeholder[1]
+        spawnUp = sizeinfo.spawnleft(N)[0]
+        spawnDown = sizeinfo.spawnleft(N)[1]
+        puntoFisso = [int(sizeinfo.spawnleft(N)[2]-sizeinfo.getwinpixel()[0] / 2), 0]
+
+
     while event.waitKeys():
         # while app is open
-        for z in range(cicli*N*2):
+        for z in range(cicli*N*2+10):
             primo = 0
             for y in range(2):
-                # ottieni informazioni di spawn per quanto  riguarda il lato destro
-
-
-
-
-
-
-
                 # "quadrante, xpos, ypos", quadrante, x_pos, y_pos)
                 if y == 0:
                     draw = rd.randint(0, 1)
                     primo = draw
                     spawnato = False
                     while not spawnato:  # qui viene contato sia lo spawn falso che quello vero  e non va bene
-                        print("Processo di spawn z", z)
+                        #print("Processo di spawn z", z)
                         UpOrDown = randint(0, 1)  # 0 = up  1=down
-                        posizioneQuadrante = randint(0, N - 1)
-                        if UpOrDown == 0:
-                            if spawnUp[posizioneQuadrante][
-                                1] < cicli:  # [[corx,numero][corx,num],cory] [[0,1][50,1],36]
-                                x_pos = spawnUp[posizioneQuadrante][0] - sizeinfo.getwinpixel()[0] / 2
-                                y_pos = spawnUp[-1]
-                                # spawnUp[posizioneQuadrante][1] = spawnUp[posizioneQuadrante][1] + 1 # questo serve per non spawnare il segnale più volte del necessario
-                                print("up or down, quadrante, uscita", UpOrDown, posizioneQuadrante,
-                                      spawnUp[posizioneQuadrante][1])
-                                spawnato = True
-                        if UpOrDown == 1:
-                            if spawnDown[posizioneQuadrante][1] < cicli:
-                                x_pos = spawnDown[posizioneQuadrante][0] - sizeinfo.getwinpixel()[0] / 2
-                                y_pos = spawnDown[-1]
-                                # spawnDown[posizioneQuadrante][1] = spawnDown[posizioneQuadrante][1] + 1 # questo serve per non spawnare il segnale più volte del necessario
-                                print("up or down, quadrante, uscita", UpOrDown, posizioneQuadrante,spawnDown[posizioneQuadrante][1])
-                                spawnato = True
+                         #0 quando esperimento  deve  essere fatto sul lato  giusto, 1 se è  giusto  per  checkare che utente stia facendo bene
+                        if z<cicli:
+                            posizioneQuadrante = randint(0, N-1)
+                        else:
+                            posizioneQuadrante = randint(0, N)
+                        if posizioneQuadrante < N:
+                            if UpOrDown == 0:
+                                if spawnUp[posizioneQuadrante][1] < cicli:  # [[corx,numero][corx,num],cory] [[0,1][50,1],36]
+                                    x_pos = spawnUp[posizioneQuadrante][0] - sizeinfo.getwinpixel()[0] / 2
+                                    y_pos = spawnUp[-1]
+                                    # spawnUp[posizioneQuadrante][1] = spawnUp[posizioneQuadrante][1] + 1 # questo serve per non spawnare il segnale più volte del necessario
+                                    #print("up or down, quadrante, uscita", UpOrDown, posizioneQuadrante,spawnUp[posizioneQuadrante][1])
+                                    spawnato = True
+                            if UpOrDown == 1:
+                                if spawnDown[posizioneQuadrante][1] < cicli:
+                                    x_pos = spawnDown[posizioneQuadrante][0] - sizeinfo.getwinpixel()[0] / 2
+                                    y_pos = spawnDown[-1]
+                                    # spawnDown[posizioneQuadrante][1] = spawnDown[posizioneQuadrante][1] + 1 # questo serve per non spawnare il segnale più volte del necessario
+                                    #print("up or down, quadrante, uscita", UpOrDown, posizioneQuadrante,spawnDown[posizioneQuadrante][1])
+                                    spawnato = True
+
+                        else:
+                            if UpOrDown == 0:
+                                if spawnUp[-2][1] < 5:  # [[corx,numero][corx,num],cory] [[0,1][50,1],36]
+                                    x_pos = spawnUp[-2][0] - sizeinfo.getwinpixel()[0] / 2
+                                    y_pos = spawnUp[-1]
+                                    spawnato = True
+                            if UpOrDown == 1:
+                                if spawnDown[-2][1] < 5:
+                                    x_pos = spawnDown[-2][0] - sizeinfo.getwinpixel()[0] / 2
+                                    y_pos = spawnDown[-1]
+                                    spawnato = True
+
                 # Set the position of the Gabor patch to the random coordinates
 
                 s.pos = [x_pos, y_pos]
@@ -254,22 +273,26 @@ def main():
                     alert()
                     draw += 1
                     # QUI CONTI
-                    print("CONTIIIIIIIIIII")
-                    if UpOrDown == 0:
-                        print("UPPPPPPPPPPPP")
-                        spawnUp[posizioneQuadrante][1] = spawnUp[posizioneQuadrante][1] + 1
+                    if posizioneQuadrante < N:
+                        if UpOrDown == 0:
+                            spawnUp[posizioneQuadrante][1] = spawnUp[posizioneQuadrante][1] + 1
+                        else:
+
+                            spawnDown[posizioneQuadrante][1] = spawnDown[posizioneQuadrante][1] + 1
                     else:
-                        print("dooooooooooown")
-                        spawnDown[posizioneQuadrante][1] = spawnDown[posizioneQuadrante][1] + 1
-                    print("UPUP  quadrante, uscita",  posizioneQuadrante, spawnUp[posizioneQuadrante][1])
-                    print("DOWN  quadrante, uscita",  posizioneQuadrante,spawnDown[posizioneQuadrante][1])
+                        if UpOrDown == 0:
+                            spawnUp[-2][1] = spawnUp[-2][1] + 1
+                        else:
+
+                            spawnDown[-2][1] = spawnDown[-2][1] + 1
+
 
                 else:
                     alert()
                     draw -= 1
                 for o in range(10):
                     for x in range(6):
-                        text = visual.TextStim(win=win, text='X', height=30, pos=[1111, 333])
+                        text = visual.TextStim(win=win, text='X', height=30, pos=puntoFisso)
                         text.draw()
                         if (x > 2):
                             visibilita = visibilita - 0.33333
@@ -299,34 +322,95 @@ def main():
 
             l = True
             event.clearEvents()
+            clickato = False
+            pausa = False
+
             while l:
-                text = visual.TextStim(win=win,
+                keys = event.getKeys(['right', 'left', 'escape', 'p'])
+                if 'p' in keys:
+                    pausa = not pausa
+                    text1 = visual.TextStim(win=win,
+                                           text='Inserire se il segnale è  stato visto al primo o al secondo suono',
+                                           height=30)
+                    if (pausa == False) and clickato:
+                        clickato = False
+                        l = False
+                    else:
+                        pausa=True
+                    text.draw()
+                else:
+                    text = visual.TextStim(win=win,
                                        text='?',
                                        height=30,
-                                       pos=[1111,333])
+                                       pos=puntoFisso)
+                if pausa and clickato:
+                    text2 = visual.TextStim(win=win,
+                                            text='Adesso si è in pausa  premere "p" per riprendere la sessione',
+                                            height=30)
+                    text2.draw()
+                elif pausa:
+                    text1.draw()
                 text.draw()
                 win.flip()
-                keys = event.getKeys(['right', 'left', 'escape'])
-
                 quadrante = sizeinfo.quadrante(UpOrDown, posizioneQuadrante, N)
 
                 if 'right' in keys:
-                    l = False
-                    if (primo == 0):
-                        # ("errato")
-                        dizionario['Q' + str(quadrante)]["Sbagliati"] = dizionario['Q' + str(quadrante)]["Sbagliati"] + 1
+                    if (pausa == False):
+                        l = False
+                    if posizioneQuadrante < N:
+                        if (primo == 0) and not clickato:
+                            # ("errato")
+                            dizionario['Q' + str(quadrante)]["Sbagliati"] += 1
+                            clickato = True
+                        elif not clickato:
+                            # ("correto")
+                            dizionario['Q' + str(quadrante)]["Giusti"] += 1
+                            clickato = True
                     else:
-                        # ("correto")
-                        dizionario['Q' + str(quadrante)]["Giusti"] = dizionario['Q' + str(quadrante)]["Giusti"] + 1
+                        if UpOrDown ==  0:
+                            if primo == 0 and not clickato:
+                                dizionario['FalsoPostivoUp']["Sbagliati"] += 1
+                                clickato = True
+                            elif not clickato:
+                                dizionario['FalsoPostivoUp']["Giusti"] += 1
+                                clickato = True
+                        else:
+                            if primo == 0 and not clickato:
+                                dizionario['FalsoPostivoDown']["Sbagliati"] += 1
+                                clickato = True
+                            elif not clickato:
+                                dizionario['FalsoPostivoDown']["Giusti"] += 1
+                                clickato = True
+
+
 
                 if 'left' in keys:
-                    l = False
-                    if (primo == 0):
-                        dizionario['Q' + str(quadrante)]["Giusti"] = dizionario['Q' + str(quadrante)]["Giusti"] + 1
-                        # ("correto")
+                    if (pausa == False):
+                        l = False
+                    if posizioneQuadrante < N:
+                        if (primo == 0) and not clickato:
+                            # ("errato")
+                            dizionario['Q' + str(quadrante)]["Giusti"] += 1
+                            clickato = True
+                        elif not clickato:
+                            # ("correto")
+                            dizionario['Q' + str(quadrante)]["Sbagliati"] += 1
+                            clickato = True
                     else:
-                        # ("errato")
-                        dizionario['Q' + str(quadrante)]["Sbagliati"] = dizionario['Q' + str(quadrante)]["Sbagliati"] + 1
+                        if UpOrDown == 0:
+                            if primo == 0 and not clickato:
+                                dizionario['FalsoPostivoUp']["Giusti"] += 1
+                                clickato = True
+                            elif not clickato:
+                                dizionario['FalsoPostivoUp']["Sbagliati"] += 1
+                                clickato = True
+                        else:
+                            if primo == 0 and not clickato:
+                                dizionario['FalsoPostivoDown']["Giusti"] += 1
+                                clickato = True
+                            elif not clickato:
+                                dizionario['FalsoPostivoDown']["Sbagliati"] += 1
+                                clickato = True
 
                 if 'escape' in keys:
                     l = False
@@ -362,11 +446,10 @@ def main():
             text.draw()
             win.flip()
             if 'escape' in keys:
-                print(dizionario)
                 try:
                     raccoltaDati.datiGabor(N, dizionario)
-                except:
-                    print("")
+                except Exception as e:
+                    print("ERROR : " + str(e))
 
                 t = False
                 win.close()

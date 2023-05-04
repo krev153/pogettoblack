@@ -1,2 +1,4 @@
-30
-1
+Cognome: ouu
+Cicli: 2
+Selected radio button: left
+Quadranti: 1

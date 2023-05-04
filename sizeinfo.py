@@ -57,6 +57,7 @@ def spawnright(N):  # ricordati la coordinate 0,0  è al centro dello schermo ma
    for i in range(N):
        spawnsUp.append([latoSX,0])
        latoSX = latoSX + temporale
+   spawnsUp.append([int(0.25 * larghezza), 0])
    spawnsUp.append(int(dimensionifinestra[1]/4))
    spawnsDown = spawnsUp.copy()
    spawnsDown[-1] = -spawnsDown[-1]
@@ -74,11 +75,10 @@ def spawnleft(N):
     for i in range(N):
         spawnsUp.append([latoSX, 0])
         latoSX = latoSX + temporale
+    spawnsUp.append([int(0.75 * larghezza),0])
     spawnsUp.append(int(dimensionifinestra[1] / 4))
     spawnsDown = spawnsUp.copy()
     spawnsDown[-1] = -spawnsDown[-1]
-    print("Up",spawnsUp)
-    print("down",spawnsDown)
     return spawnsUp, spawnsDown, int(0.75 * larghezza), dimensionifinestra[1], temporale
 
 def DivisioneQuadrantiOriz(confine1, confine2 ,N): #date le coordinate e dati quante parti di schermo voglio nella metà verticale, restiuisce un vettore con le divisioni (Nx2 dove N = numero quadrati in orrizzontale)
